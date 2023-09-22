@@ -1,11 +1,13 @@
 import { useRef, useState } from "react";
-import { validateWithDefaultRules } from "./validateWithDefaultRules";
+import { _isValidPassword } from "./validators";
+import { _DEFAULT_CONFIRMATION_PWD_WORDING, _DEFAULT_NEW_PWD_WORDING, _DEFAULT_RESTRICTED_MODEL, _DEFAULT_TITLE } from "./Constantes";
 
-export default function ChangePassword({ validate = validateWithDefaultRules }) {
+export default function ChangePassword({ title, newPassword, confirmedPassword, validate = _isValidPassword, restrictedModel }) {
     const [passwordChanged, setPasswordChanged] = useState(false);
     const [disableButton, setDisableButton] = useState(true);
-    const password = useRef("");
-    const confirmedPassword = useRef("");
+
+    const passwordRef = useRef("");
+    const confirmedPasswordRef = useRef("");
 
     const processValidationPwd = (event) => {
         event.preventDefault();
@@ -14,7 +16,7 @@ export default function ChangePassword({ validate = validateWithDefaultRules }) 
             console.log("Different passwords");
         }   
 
-        const valid = validate(password.current.value);
+        const valid = validate(password.current.value, restrictedModel);
         if (valid) {
             setPasswordChanged(true);
         } else {
@@ -36,17 +38,17 @@ export default function ChangePassword({ validate = validateWithDefaultRules }) 
             <img src="https://cdn-icons-png.flaticon.com/512/6195/6195699.png" id="signupLogo" />
 
                 <h2 className="formTitle">
-                    Change Password
+                    {title ?? _DEFAULT_TITLE}
                 </h2>
 
-                <div className="inputDiv">
-                    <label className="inputLabel" htmlFor="password">New Password</label>
-                    <input type="password" id="password" name="password" required ref={password} onChange={handleInputChange}/>
+                <div className="input-group">
+                    <label className="inputLabel" htmlFor="password">{newPassword ?? _DEFAULT_NEW_PWD_WORDING}</label>
+                    <input type="password" id="password" name="password" required ref={passwordRef} onChange={handleInputChange}/>
                 </div>
 
-                <div className="inputDiv">
-                    <label className="inputLabel" htmlFor="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" ref={confirmedPassword} onChange={handleInputChange}/>
+                <div className="input-group">
+                    <label className="inputLabel" htmlFor="confirmPassword">{confirmedPassword ?? _DEFAULT_CONFIRMATION_PWD_WORDING}</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" ref={confirmedPasswordRef} onChange={handleInputChange}/>
                 </div>
 
                 <div className="buttonWrapper">
