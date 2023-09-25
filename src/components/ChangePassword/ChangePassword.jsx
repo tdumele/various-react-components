@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
-import { _isValidPassword } from "./validators";
-import { _DEFAULT_CONFIRMATION_PWD_WORDING, _DEFAULT_ERROR_PWD_PATTERN, _DEFAULT_NEW_PWD_WORDING, _DEFAULT_RESTRICTED_MODEL, _DEFAULT_TITLE } from "./Constantes";
+import PropTypes from 'prop-types';
+import { _isValidPassword } from "./defaultValidators";
+import { _CONFIRMATION_PWD_WORDING, _ERROR_PWD_PATTERN, _NEW_PWD_WORDING, _TITLE } from "./Constantes";
 
-export default function ChangePassword({ validate = _isValidPassword, restrictedModel, title, newPassword, confirmedPassword, errorMessage}) {
-    const [passwordChanged, setPasswordChanged] = useState(false);
+export default function ChangePassword({ onSuccess, validate = _isValidPassword, restrictedModel}) {
     const [disableButton, setDisableButton] = useState(true);
     const [error, setError] = useState(false);
 
@@ -19,7 +19,7 @@ export default function ChangePassword({ validate = _isValidPassword, restricted
 
         const valid = validate(passwordRef.current.value, restrictedModel);
         if (valid) {
-            setPasswordChanged(true);
+            onSuccess();
         } else {
             setError(true);
         }
@@ -39,18 +39,18 @@ export default function ChangePassword({ validate = _isValidPassword, restricted
             <img src="https://cdn-icons-png.flaticon.com/512/6195/6195699.png" id="signupLogo" />
 
                 <h2 className="formTitle">
-                    {title ?? _DEFAULT_TITLE}
+                    {_TITLE}
                 </h2>
 
                 <div className="input-group">
-                    <label className="inputLabel" htmlFor="password">{newPassword ?? _DEFAULT_NEW_PWD_WORDING}</label>
+                    <label className="inputLabel" htmlFor="password">{_NEW_PWD_WORDING}</label>
                     <input type="password" id="password" name="password" required ref={passwordRef} onChange={handleInputChange}/>
                 </div>
 
                 <div className="input-group">
-                    <label className="inputLabel" htmlFor="confirmPassword">{confirmedPassword ?? _DEFAULT_CONFIRMATION_PWD_WORDING}</label>
+                    <label className="inputLabel" htmlFor="confirmPassword">{_CONFIRMATION_PWD_WORDING}</label>
                     <input type="password" id="confirmPassword" name="confirmPassword" ref={confirmedPasswordRef} onChange={handleInputChange}/>
-                    {error && <span className="error">{errorMessage ?? _DEFAULT_ERROR_PWD_PATTERN}</span>}
+                    {error && <span className="error">{_ERROR_PWD_PATTERN}</span>}
                 </div>
                 
 
@@ -61,7 +61,13 @@ export default function ChangePassword({ validate = _isValidPassword, restricted
                 </div>
                 
             </form>
-            {passwordChanged ? <p>Password Changed</p> : null}
         </div>
     )
 }
+
+ChangePassword.propTypes = {
+    onSuccess: PropTypes.func,
+    validate: PropTypes.func,
+    restrictedModel: PropTypes.array,
+}
+
